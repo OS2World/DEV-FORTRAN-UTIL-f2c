@@ -1,0 +1,5 @@
+LIBRARY F2CDLL
+DESCRIPTION 'dynamic link support library for f2c generated C code'
+DATA
+   MULTIPLE NONSHARED
+EXPORTS

@@ -1,0 +1,263 @@
+From dmg Tue Jul 11 08:08:46 EDT 1989
+f2c's formatted I/O (at least the little I've tried)
+seems to work with Sun's libF77 and libI77 on sol;
+some list-directed I/O works, but not character
+strings -- Sun's f77 issues different calls for them.
+
+From gre Fri Aug  4 21:09:07 EDT 1989
+
+f2c.news (dmg) Fri Aug  4 17:24:39 1989
+
+   Now available for "friendly use", f2c converts Fortran 77
+   source code to C.  By default, it tries for bit-level
+   compatibility with f77.  Usage:
+	   f2c [flags] file ...
+   File names must end in .f or .F; corresponding .c files are
+   produced in the current directory (unless no file arguments
+   are given, in which case f2c acts as a filter).  `man f2c`
+   describes flags and other details.  Bug reports to dmg.
+
+
+From dmg Sat Aug  5 13:21:08 EDT 1989
+I've tweaked things in netlib/f2c so one can pass options by
+having the first line after "execute f2c" begin with "c$f2c ",
+followed by options.  Source for F2cargs is /n/pipe/usr/dmg/f2c/F2cargs.c .
+(This also involved tweaking /n/crab/usr/ehg/bin/netlib.f2c .)
+
+From coma!ehg Sat Aug  5 16:30:00 EDT 1989
+>From research!bowell!dmg 6 Aug 89 10:24:36 GMT
+(bowell.1828)  comet               : /usr/bin/f2c
+New flag -r8 promotes REAL to DOUBLE PRECISION, COMPLEX to DOUBLE COMPLEX
+(a la Berkeley f77).
+
+
+From coma!ehg Thu Aug 10 16:30:00 EDT 1989
+>From research!bowell!dmg 11 Aug 89 06:39:59 GMT
+(bowell.1841)  comet               : /usr/bin/f2c
+Quietly allow names up to 8 characters long (except under -ext).
+Complain about, then ignore arguments to a main program.
+Under -u, complain just once about each undeclared variable.
+
+
+From arpa!hilbert.cray.com!tam Wed Aug  9 20:26:04 CDT 1989
+Received: from hall.cray.com by uc.msc.umn.edu (5.59/1.14)
+	id AA13772; Thu, 10 Aug 89 17:57:59 CDT
+Received: from tmacd.cray.com by hall.cray.com
+	id AA09337; 3.2/CRI-3.10; Wed, 9 Aug 89 20:26:10 CDT
+Received: by tmacd.cray.com
+	id AA05465; 3.2/CRI-3.10; Wed, 9 Aug 89 20:26:04 CDT
+Date: Wed, 9 Aug 89 20:26:04 CDT
+From: tam@hilbert.cray.com (Tom MacDonald)
+Message-Id: <8908100126.AA05465@tmacd.cray.com>
+To: asg%3k@arpa.att.com, dmr@research.att.com, ehg@research.att.com,
+        nls@research.att.com, pjw@research.att.com, wmc@research.att.com
+Subject: f2c help
+
+Hi,
+
+I promise not inundate all of you with so much Email in the future.
+We tried the 'f2c' translator (or at least Bertice Haines did) and
+she sent me the following Email.
+
+======================================================================
+Tom
+It doesn't look like I'm going to get very far with the fortran
+to C translator.  It considers variables longer than six characters
+to be errors and truncates them.  It also mentions libraries that
+we don't have and need a header file called f2c.h
+
+                                  Bertice
+
+
+From: netlibd@arpa.att.com
+Date: Tue, 8 Aug 89 22:02:21 EDT
+To: arpa!bedlam.cray.com!bjh
+Subject: filter f2c
+Status: R
+
+/*  -- translated by f2c (version 0.6, all of Fortran 77).
+   You must link the resulting object file with the libraries:
+        -lF77 -lI77 -lm -lc   (in that order)
+*/
+
+#include "f2c.h"
+========================================================================
+
+I was wondering if anyone else had complained about these issues.
+Our Fortran compiler cft77 allows longer variable names.  Also
+can I get a copy of the "f2c.h" header.  And finally, can anyone
+tell me what the libraries libF77.a and libI77.a contain.  I'd
+really like to use 'f2c' as a way of finding out where the Standard C
+compiler is deficient (performance wise).  It also might help me understand
+what I need to do to support your C environment.
+
+Thanks for your help.
+
+Tom MacDonald
+tam@cray.com
+uunet!cray!tam
+
+
+From ehg Thu Aug 10 22:10:25 EDT 1989
+From-: Eric Grosse  ehg@research.att.com 201-582-5828
+To-: tam@cray.com 3k!asg dmr nls pjw wmc dmg
+Date-: Thu Aug 10 22:10:24 EDT 1989
+Subject: Re: f2c help
+
+(I'm sending this to the other recipients so they know they
+don't have to reply.  In general, the right fellow to contact
+is David Gay, research!dmg.  But he's going to be gone for a bit,
+so I'll reply as best I can.)
+
+
+From ehg Thu Aug 10 22:15:03 EDT 1989
+From-: Eric Grosse  ehg@research.att.com 201-582-5828
+To-: tam@cray.com 3k!asg dmr nls pjw wmc dmg
+Date-: Thu Aug 10 22:15:02 EDT 1989
+Subject: Re: f2c help
+
+Oops, the system truncated my message.  Here goes another try...
+
+[long names]  I also consider Fortran names of more than 6 characters
+to be errors.  But David sent out mail this morning saying that f2c
+would now allow names up to 8 characters;  perhaps that will help.
+But in the final analysis, this is Fortran77->C, not CFT->C.
+
+[libraries and headers]  About a week ago, David also updated the
+index file in netlib to point to these supplementary files.  Say
+	mail netlib@research.att.com
+	send f2c.h from f2c
+	send libf77 from f2c
+	send libi77 from f2c
+and you'll get back the items you asked for.  I know it is a little
+startling to see the converted code calling the Fortran runtime
+library.  I understand that this policy was adopted in order that
+the converted program would give output byte-for-byte identical with
+the original Fortran.  Of course, this is only true on classical
+Unix systems running Feldman's compiler.  Still, if you can match
+these codes to your own runtime library closely enough, perhaps you
+too can compare the Fortran and C output automatically.
+
+
+Please pass along my best wishes to Bertice.  She did an
+excellent job for us while she was at Murray Hill.
+
+Eric
+
+From 3k!asg Fri Aug 11 16:11 EDT 1989
+To: pipe!ehg
+Subject: Re: f2c help
+
+You can send your regards/complements directly to Bertice,
+bjh@cray.com. Aaron
+
+From arpa!bedlam.cray.com!bjh Tue Aug 15 09:15:20 CDT 1989
+Received: from sc.msc.umn.edu by uc.msc.umn.edu (5.59/1.14)
+	id AA25045; Tue, 15 Aug 89 09:13:30 CDT
+Received: from hall.cray.com (hall.cray.com.ARPA) by sc.msc.umn.edu; Tue, 15 Aug 89 09:53:40 cdt
+Received: from pacific.cray.com by hall.cray.com
+	id AA18668; 3.2/CRI-3.11; Tue, 15 Aug 89 09:15:25 CDT
+Received: by pacific.cray.com
+	id AA16716; 3.2/CRI-3.11; Tue, 15 Aug 89 09:15:20 CDT
+Date: Tue, 15 Aug 89 09:15:20 CDT
+From: bjh@bedlam.cray.com (Bertice Haines)
+Message-Id: <8908151415.AA16716@pacific.cray.com>
+To: dmg@research.att.com, ehg@research.att.com
+
+I think I now have all of the pieces needed to convert some of our
+cft77 regression tests using f2c.  Thanks for your help.
+
+                               Bertice
+
+From coma!ehg Fri Sep  1 04:30:00 EDT 1989
+>From research!bowell!pg 1 Sep 89 15:29:25 GMT
+(bowell.1861)  comet               : lp
+shipped /usr/spool/lp/devices /usr/spool/lp/process/generic /usr/spool/lp/spooler/generic /usr/spool/lp/spooler/dkgeneric
+
+Now knows about "lino".
+
+Some general cleanup.
+
+>From research!bowell!dmg 1 Sep 89 15:45:53 GMT
+(bowell.1862)  comet               : /usr/bin/f2c
+Make A(min(i,j)) work when A is an array.
+Add 7 and 8 character C keywords to the list of names
+that have an underscore appended.
+Accumulate block data in /tmp rather than the current directory.
+Issue an error message for LOGICAL*1 (just one per LOGICAL*1 type
+stmt, rather than one per variable in the stmt), and treat LOGICAL*1
+as LOGICAL rather than declining to produce any C output.
+Allow INTEGER variables to be used as formats (a la f77 and FORTRAN 66).
+
+>From research!bowell!norman 1 Sep 89 17:35:07 GMT
+(bowell.1863)  comet               : uucp/Systems.dk
+september NAC shipment.
+if you are in the habit of snitching Systems.gen as well,
+pick up a new Dialcodes file; prefix DLl has been added.
+
+>From research!bowell!doug 1 Sep 89 20:50:49 GMT
+(bowell.1864)  comet               : man.macros
+tweak to avoid hyphenating certain literals
+
+
+------m dmg nls Sat Sep 16 00:19:45 EDT 1989
+To-: dmg nls
+The message
+
+Subject: execute f2c
+      x=1
+      end
+
+is, according to the RFC822 mail standard, just one (continued)
+header line, and the message body is empty.  If people complain
+to you that they're getting back empty C, that's probably the cause.
+
+From coma!ehg Tue Oct  3 04:30:00 EDT 1989
+>From research!bowell!dmg 3 Oct 89 14:34:35 GMT
+(bowell.1934)  comet               : /usr/bin/f2c
+   Fix bugs in character DATA for noncharacter variables
+involved in EQUIVALENCE.
+   Portable initialization of noncharacter variables
+with character data.
+   IMPLICIT NONE is now treated as IMPLICIT UNDEFINED(A-Z).
+   New option -!I disables includes (for netlib).
+   Bail out when given an invalid option.
+
+
+From cs.utk.edu!dongarra Sat Aug 25 17:37:05 EDT 1990
+Received: by pyxis; Sat Aug 25 17:36 EDT 1990
+Received: by inet.att.com; Sat Aug 25 17:36 EDT 1990
+Received:  by dasher.cs.utk.edu (4.0/2.6c-UTK)
+	id AA02469; Sat, 25 Aug 90 17:37:05 EDT
+Date: Sat, 25 Aug 90 17:37:05 EDT
+From: dongarra@cs.utk.edu
+Message-Id: <9008252137.AA02469@dasher.cs.utk.edu>
+To: ehg@research.att.com
+Subject: Re:  netlib news
+
+Eric,
+I copies most things from /netlib/temp. I think I screwed up with /netlib/go,
+so when you get a chance please put it back. I removed all files with 
+the exception of admin. I haven't copied that yet, since I need to check
+the index and LIBS before coping.
+
+Does the newest version of netlib automatically do the f2c function?
+I don't think I have the latest.
+Jack
+
+------m dongarra Sun Aug 26 17:29:12 EDT 1990
+
+I don't remember what was in temp/go.  I'm running a complete check now
+and that will cover any problems with go.
+
+The f2c execution stuff here has lots of dmg (=David Gay) specific
+file names, so when I copied the files to Oslo, I didn't bother to
+install the executables.  I get the impression that most people
+these days want to run it on their own machine anyway.  The main
+motivation for sending a file to netlib would be as a quick test-run
+or as a has-this-bug-been-fixed-yet test.  For those purposes, it
+is probably best that they send the files to David's latest version
+anyway.
+
+Best wishes
+Eric
